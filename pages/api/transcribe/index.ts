@@ -107,7 +107,7 @@ export default async function handler(
       success: true, 
       message: 'Transcription started successfully' 
     })
-  } catch (error: any) {
+  } catch (error) {
     console.error('Transcription error:', error)
     
     // Update status to failed
@@ -116,6 +116,6 @@ export default async function handler(
       .update({ stt_status: 'failed' })
       .eq('id', interview_id)
 
-    return res.status(500).json({ error: error.message })
+    return res.status(500).json({ error: error instanceof Error ? error.message : 'Internal server error' })
   }
 }

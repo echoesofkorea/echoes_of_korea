@@ -33,7 +33,7 @@ export default async function handler(
     )
 
     return res.status(200).json({ user: data.user })
-  } catch (error: any) {
-    return res.status(500).json({ error: error.message })
+  } catch (error) {
+    return res.status(500).json({ error: error instanceof Error ? error.message : 'Internal server error' })
   }
 }

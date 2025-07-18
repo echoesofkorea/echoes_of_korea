@@ -58,8 +58,8 @@ export default async function handler(
     }
 
     return res.status(200).json({ success: true })
-  } catch (error: any) {
+  } catch (error) {
     console.error('STT webhook error:', error)
-    return res.status(500).json({ error: error.message })
+    return res.status(500).json({ error: error instanceof Error ? error.message : 'Internal server error' })
   }
 }

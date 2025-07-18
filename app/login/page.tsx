@@ -2,11 +2,14 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { useTranslation } from 'react-i18next'
 import { supabase } from '@/lib/supabaseClient'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
+import LanguageSwitcher from '@/components/LanguageSwitcher'
 
 export default function LoginPage() {
+  const { t } = useTranslation()
   const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -22,7 +25,7 @@ export default function LoginPage() {
       }
     }
     checkAuth()
-  }, [])
+  }, [router])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -60,9 +63,9 @@ export default function LoginPage() {
       
       console.log('🔄 대시보드로 이동...')
       router.push('/admin/dashboard')
-    } catch (error: any) {
+    } catch (error) {
       console.error('❌ 로그인 에러:', error)
-      setError(error.message || '로그인에 실패했습니다.')
+      setError(error instanceof Error ? error.message : t('error'))
     } finally {
       setLoading(false)
     }
@@ -71,12 +74,15 @@ export default function LoginPage() {
   return (
     <div className="flex items-center justify-center min-h-screen">
       <div className="max-w-md w-full space-y-8 px-4">
+        <div className="flex justify-end">
+          <LanguageSwitcher />
+        </div>
         <div>
           <h2 className="mt-6 text-center text-3xl font-bold text-primary">
-            로그인
+            {t('loginTitle')}
           </h2>
           <p className="mt-2 text-center text-sm text-muted">
-            Echoes of Korea 관리자 로그인
+            {t('loginSubtitle')}
           </p>
         </div>
         
@@ -89,7 +95,7 @@ export default function LoginPage() {
           
           <div className="space-y-4">
             <Input
-              label="이메일"
+              label={t('email')}
               id="email"
               type="email"
               value={email}
@@ -99,13 +105,13 @@ export default function LoginPage() {
             />
             
             <Input
-              label="비밀번호"
+              label={t('password')}
               id="password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              placeholder="비밀번호를 입력하세요"
+              placeholder={t('password')}
             />
           </div>
 
@@ -114,7 +120,7 @@ export default function LoginPage() {
             className="w-full"
             disabled={loading}
           >
-            {loading ? '로그인 중...' : '로그인'}
+            {loading ? t('loggingIn') : t('loginButton')}
           </Button>
         </form>
       </div>

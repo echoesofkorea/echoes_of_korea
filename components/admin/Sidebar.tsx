@@ -2,7 +2,9 @@
 
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
+import { useTranslation } from 'react-i18next'
 import { supabase } from '@/lib/supabaseClient'
+import LanguageSwitcher from '@/components/LanguageSwitcher'
 import { 
   HomeIcon, 
   MicrophoneIcon, 
@@ -11,13 +13,14 @@ import {
 } from '@heroicons/react/24/outline'
 
 export default function Sidebar() {
+  const { t } = useTranslation()
   const pathname = usePathname()
   const router = useRouter()
 
   const navigation = [
-    { name: '대시보드', href: '/admin/dashboard', icon: HomeIcon },
-    { name: '인터뷰', href: '/admin/interviews', icon: MicrophoneIcon },
-    { name: '새 인터뷰', href: '/admin/interviews/new', icon: DocumentTextIcon },
+    { name: t('sidebarDashboard'), href: '/admin/dashboard', icon: HomeIcon },
+    { name: t('sidebarInterviews'), href: '/admin/interviews', icon: MicrophoneIcon },
+    { name: t('newInterview'), href: '/admin/interviews/new', icon: DocumentTextIcon },
   ]
 
   const handleLogout = async () => {
@@ -60,13 +63,16 @@ export default function Sidebar() {
         })}
       </nav>
 
-      <div className="border-t border-gray-200 p-4">
+      <div className="border-t border-gray-200 p-4 space-y-3">
+        <div className="px-2">
+          <LanguageSwitcher />
+        </div>
         <button 
           onClick={handleLogout}
           className="group flex w-full items-center px-2 py-2 text-sm font-medium text-secondary rounded-md hover:bg-gray-50 hover:text-primary"
         >
           <ArrowRightOnRectangleIcon className="mr-3 h-5 w-5 text-muted group-hover:text-secondary" />
-          로그아웃
+          {t('sidebarLogout')}
         </button>
       </div>
     </div>

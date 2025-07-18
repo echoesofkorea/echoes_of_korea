@@ -34,8 +34,8 @@ export default function TranscriptSection({
 
       setTranscript(editedTranscript)
       setIsEditing(false)
-    } catch (err: any) {
-      setError(err.message || '저장 중 오류가 발생했습니다.')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '저장 중 오류가 발생했습니다.')
     } finally {
       setSaving(false)
     }

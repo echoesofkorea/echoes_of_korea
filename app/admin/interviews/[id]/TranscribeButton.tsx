@@ -29,8 +29,8 @@ export default function TranscribeButton({ interviewId }: { interviewId: string 
       }
 
       router.refresh()
-    } catch (err: any) {
-      setError(err.message)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '전사 시작 중 오류가 발생했습니다.')
     } finally {
       setLoading(false)
     }

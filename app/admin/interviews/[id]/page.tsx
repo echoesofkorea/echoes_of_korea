@@ -29,9 +29,10 @@ async function getInterview(id: string): Promise<Interview | null> {
 export default async function InterviewDetailPage({ 
   params 
 }: { 
-  params: { id: string } 
+  params: Promise<{ id: string }> 
 }) {
-  const interview = await getInterview(params.id)
+  const { id } = await params
+  const interview = await getInterview(id)
 
   if (!interview) {
     return (
