@@ -42,7 +42,7 @@ export default async function DashboardPage() {
     <div>
       <div className="mb-8">
         <h1 className="text-4xl font-bold text-primary">대시보드</h1>
-        <p className="mt-1 text-sm text-muted">구술사 인터뷰 관리 시스템</p>
+        <p className="mt-1 text-sm text-muted">구술사 프로젝트 관리</p>
       </div>
 
       {/* Stats Grid */}
@@ -56,7 +56,7 @@ export default async function DashboardPage() {
               <div className="ml-5 w-0 flex-1">
                 <dl>
                   <dt className="text-sm font-medium text-muted truncate">
-                    전체 인터뷰
+                    총 인터뷰
                   </dt>
                   <dd className="text-2xl font-bold text-primary">
                     {stats.total}
@@ -76,7 +76,7 @@ export default async function DashboardPage() {
               <div className="ml-5 w-0 flex-1">
                 <dl>
                   <dt className="text-sm font-medium text-muted truncate">
-                    전사 완료
+                    완료된 전사
                   </dt>
                   <dd className="text-2xl font-bold text-primary">
                     {stats.completed}
@@ -96,7 +96,7 @@ export default async function DashboardPage() {
               <div className="ml-5 w-0 flex-1">
                 <dl>
                   <dt className="text-sm font-medium text-muted truncate">
-                    전사 진행중
+                    처리 중
                   </dt>
                   <dd className="text-2xl font-bold text-primary">
                     {stats.processing}
@@ -112,9 +112,9 @@ export default async function DashboardPage() {
       <div className="bg-surface shadow rounded-lg">
         <div className="px-4 py-5 sm:p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-primary">최근 인터뷰</h2>
+            <h2 className="text-xl font-semibold text-primary">최근 활동</h2>
             <Link href="/admin/interviews/new">
-              <Button size="small">새 인터뷰 추가</Button>
+              <Button size="small">새 인터뷰</Button>
             </Link>
           </div>
 
@@ -122,10 +122,10 @@ export default async function DashboardPage() {
             <div className="text-center py-12">
               <DocumentTextIcon className="mx-auto h-12 w-12 text-muted" />
               <h3 className="mt-2 text-sm font-medium text-primary">인터뷰가 없습니다</h3>
-              <p className="mt-1 text-sm text-muted">새 인터뷰를 추가해보세요.</p>
+              <p className="mt-1 text-sm text-muted">첫 번째 인터뷰를 시작해보세요.</p>
               <div className="mt-6">
                 <Link href="/admin/interviews/new">
-                  <Button>첫 인터뷰 추가하기</Button>
+                  <Button>첫 인터뷰 시작</Button>
                 </Link>
               </div>
             </div>
@@ -135,16 +135,16 @@ export default async function DashboardPage() {
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-primary sm:pl-6">
-                      제목
+                      인터뷰 제목
                     </th>
                     <th className="px-3 py-3.5 text-left text-sm font-semibold text-primary">
-                      인터뷰이
+                      피인터뷰자
                     </th>
                     <th className="px-3 py-3.5 text-left text-sm font-semibold text-primary">
-                      날짜
+                      인터뷰 날짜
                     </th>
                     <th className="px-3 py-3.5 text-left text-sm font-semibold text-primary">
-                      상태
+                      전사 상태
                     </th>
                   </tr>
                 </thead>
@@ -167,10 +167,10 @@ export default async function DashboardPage() {
                           <Badge variant="success">완료</Badge>
                         )}
                         {interview.stt_status === 'processing' && (
-                          <Badge variant="warning">진행중</Badge>
+                          <Badge variant="warning">처리 중</Badge>
                         )}
                         {interview.stt_status === 'not_started' && (
-                          <Badge>대기</Badge>
+                          <Badge>대기 중</Badge>
                         )}
                         {interview.stt_status === 'failed' && (
                           <Badge variant="danger">실패</Badge>

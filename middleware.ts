@@ -3,49 +3,38 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  let response = NextResponse.next({
+    request: {
+      headers: request.headers,
+    },
+  })
 
   const supabase = createServerClient(
-    supabaseUrl,
-    supabaseAnonKey,
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
         getAll() {
           return request.cookies.getAll()
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value)
-          )
+          cookiesToSet.forEach(({ name, value, options }) => {
+            request.cookies.set({ name, value })
+            response.cookies.set({ name, value, ...options })
+          })
         },
       },
     }
   )
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  // This will refresh session if expired - required for Server Components
+  await supabase.auth.getUser()
 
-  // 인증이 필요한 경로
-  if (request.nextUrl.pathname.startsWith('/admin') && 
-      !request.nextUrl.pathname.startsWith('/admin/login')) {
-    if (!user) {
-      const redirectUrl = request.nextUrl.clone()
-      redirectUrl.pathname = '/admin/login'
-      redirectUrl.searchParams.set('redirect', request.nextUrl.pathname)
-      return NextResponse.redirect(redirectUrl)
-    }
-  }
-
-  // 로그인한 사용자가 로그인 페이지 접근 시 대시보드로 리다이렉트
-  if (request.nextUrl.pathname === '/admin/login' && user) {
-    return NextResponse.redirect(new URL('/admin/dashboard', request.url))
-  }
-
-  return NextResponse.next()
+  return response
 }
 
 export const config = {
-  matcher: ['/admin/:path*']
+  matcher: [
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+  ],
 }

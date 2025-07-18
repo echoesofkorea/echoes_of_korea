@@ -30,18 +30,34 @@ export default function NewInterviewPage() {
 
       // Upload audio file if selected
       if (audioFile) {
+        console.log('📁 파일 업로드 시작:', audioFile.name)
         const fileExt = audioFile.name.split('.').pop()
         const fileName = `${Date.now()}.${fileExt}`
+        console.log('📁 생성된 파일명:', fileName)
+        
         const { error: uploadError } = await supabase.storage
           .from('audio-files')
           .upload(fileName, audioFile)
 
-        if (uploadError) throw uploadError
+        if (uploadError) {
+          console.error('❌ 파일 업로드 실패:', uploadError)
+          throw uploadError
+        }
+        
+        console.log('✅ 파일 업로드 성공:', fileName)
         audio_file_path = fileName
       }
 
       // Insert interview record
-      const { error: dbError } = await supabase
+      console.log('💾 데이터베이스 저장 시작:', {
+        title: formData.title,
+        interviewee_name: formData.interviewee_name,
+        interviewee_birth_year: formData.interviewee_birth_year ? parseInt(formData.interviewee_birth_year) : null,
+        interview_date: formData.interview_date || null,
+        audio_file_path,
+      })
+      
+      const { data: insertData, error: dbError } = await supabase
         .from('interviews')
         .insert({
           title: formData.title,
@@ -49,10 +65,17 @@ export default function NewInterviewPage() {
           interviewee_birth_year: formData.interviewee_birth_year ? parseInt(formData.interviewee_birth_year) : null,
           interview_date: formData.interview_date || null,
           audio_file_path,
+          is_published: true,
         })
+        .select()
 
-      if (dbError) throw dbError
-
+      if (dbError) {
+        console.error('❌ 데이터베이스 저장 실패:', dbError)
+        throw dbError
+      }
+      
+      console.log('✅ 데이터베이스 저장 성공:', insertData)
+      console.log('🔄 인터뷰 목록으로 이동 중...')
       router.push('/admin/interviews')
     } catch (err: any) {
       setError(err.message || '인터뷰 추가 중 오류가 발생했습니다.')

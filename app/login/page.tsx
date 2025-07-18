@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import Button from '@/components/ui/Button'
@@ -13,36 +13,70 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
+  // 이미 로그인된 사용자는 대시보드로 리다이렉트
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        router.push('/admin/dashboard')
+      }
+    }
+    checkAuth()
+  }, [])
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError('')
 
+    console.log('🔐 로그인 시도:', { email, password: '***' })
+
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
 
-      if (error) throw error
+      console.log('🔐 로그인 응답:', { data, error })
 
+      if (error) {
+        console.error('❌ 로그인 실패:', error)
+        throw error
+      }
+
+      console.log('✅ 로그인 성공:', data.user?.email)
+      console.log('🍪 세션 정보:', data.session?.access_token ? '토큰 있음' : '토큰 없음')
+
+      // 클라이언트에서 쿠키 확인
+      const cookies = document.cookie
+      console.log('🍪 브라우저 쿠키:', cookies)
+      
+      // 세션이 제대로 설정될 때까지 잠시 대기
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      
+      // 세션 확인
+      const { data: sessionCheck } = await supabase.auth.getSession()
+      console.log('🔍 세션 재확인:', sessionCheck.session ? '세션 있음' : '세션 없음')
+      
+      console.log('🔄 대시보드로 이동...')
       router.push('/admin/dashboard')
     } catch (error: any) {
-      setError(error.message || '로그인 중 오류가 발생했습니다.')
+      console.error('❌ 로그인 에러:', error)
+      setError(error.message || '로그인에 실패했습니다.')
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="max-w-md w-full space-y-8">
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="max-w-md w-full space-y-8 px-4">
         <div>
           <h2 className="mt-6 text-center text-3xl font-bold text-primary">
-            Echoes of Korea
+            로그인
           </h2>
           <p className="mt-2 text-center text-sm text-muted">
-            관리자 로그인
+            Echoes of Korea 관리자 로그인
           </p>
         </div>
         

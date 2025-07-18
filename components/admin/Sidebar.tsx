@@ -1,7 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
+import { supabase } from '@/lib/supabaseClient'
 import { 
   HomeIcon, 
   MicrophoneIcon, 
@@ -9,14 +10,24 @@ import {
   ArrowRightOnRectangleIcon 
 } from '@heroicons/react/24/outline'
 
-const navigation = [
-  { name: '대시보드', href: '/admin/dashboard', icon: HomeIcon },
-  { name: '인터뷰 목록', href: '/admin/interviews', icon: MicrophoneIcon },
-  { name: '새 인터뷰 추가', href: '/admin/interviews/new', icon: DocumentTextIcon },
-]
-
 export default function Sidebar() {
   const pathname = usePathname()
+  const router = useRouter()
+
+  const navigation = [
+    { name: '대시보드', href: '/admin/dashboard', icon: HomeIcon },
+    { name: '인터뷰', href: '/admin/interviews', icon: MicrophoneIcon },
+    { name: '새 인터뷰', href: '/admin/interviews/new', icon: DocumentTextIcon },
+  ]
+
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut()
+      router.push('/login')
+    } catch (error) {
+      console.error('로그아웃 실패:', error)
+    }
+  }
 
   return (
     <div className="flex h-full w-64 flex-col bg-surface border-r border-gray-200">
@@ -50,7 +61,10 @@ export default function Sidebar() {
       </nav>
 
       <div className="border-t border-gray-200 p-4">
-        <button className="group flex w-full items-center px-2 py-2 text-sm font-medium text-secondary rounded-md hover:bg-gray-50 hover:text-primary">
+        <button 
+          onClick={handleLogout}
+          className="group flex w-full items-center px-2 py-2 text-sm font-medium text-secondary rounded-md hover:bg-gray-50 hover:text-primary"
+        >
           <ArrowRightOnRectangleIcon className="mr-3 h-5 w-5 text-muted group-hover:text-secondary" />
           로그아웃
         </button>
