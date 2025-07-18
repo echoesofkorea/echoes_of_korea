@@ -38,7 +38,7 @@ const resources = {
       interviewStatus: '상태',
       interviewActions: '작업',
       interviewsList: '인터뷰 목록',
-      totalInterviewsCount: '전체 {count}개의 인터뷰',
+      totalInterviewsCount: '전체 {{count}}개의 인터뷰',
       addNewInterview: '새 인터뷰 추가',
       noInterviewsTitle: '인터뷰가 없습니다',
       noInterviewsMessage: '첫 인터뷰를 추가해보세요.',
